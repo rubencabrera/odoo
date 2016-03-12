@@ -1078,6 +1078,9 @@ class account_invoice(models.Model):
             :param integer journal_id: account.journal from the wizard
             :return: dict of value to create() the refund
         """
+        if not invoice:
+            raise except_orm(_('No Invoice Defined!'),
+                            _("You must first select an invoice for this RMA!"))
         values = {}
         for field in ['name', 'reference', 'comment', 'date_due', 'partner_id', 'company_id',
                 'account_id', 'currency_id', 'payment_term', 'user_id', 'fiscal_position']:
@@ -1098,8 +1101,8 @@ class account_invoice(models.Model):
         else:
             journal = self.env['account.journal'].search([('type', '=', 'sale_refund')], limit=1)
         values['journal_id'] = journal.id
-        if invoice['type']:
-            values['type'] = TYPE2REFUND[invoice['type']] 
+
+        values['type'] = TYPE2REFUND[invoice['type']]
         values['date_invoice'] = date or fields.Date.context_today(invoice)
         values['state'] = 'draft'
         values['number'] = False
