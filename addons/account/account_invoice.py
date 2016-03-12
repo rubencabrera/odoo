@@ -1098,8 +1098,8 @@ class account_invoice(models.Model):
         else:
             journal = self.env['account.journal'].search([('type', '=', 'sale_refund')], limit=1)
         values['journal_id'] = journal.id
-
-        values['type'] = TYPE2REFUND[invoice['type']] if invoice['type']
+        if invoice['type']:
+            values['type'] = TYPE2REFUND[invoice['type']] 
         values['date_invoice'] = date or fields.Date.context_today(invoice)
         values['state'] = 'draft'
         values['number'] = False
